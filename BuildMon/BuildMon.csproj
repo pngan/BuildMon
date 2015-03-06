@@ -39,9 +39,6 @@
     <Reference Include="Autofac">
       <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="Serilog">
       <HintPath>..\packages\Serilog.1.4.182\lib\net45\Serilog.dll</HintPath>
     </Reference>
@@ -49,12 +46,8 @@
       <HintPath>..\packages\Serilog.1.4.182\lib\net45\Serilog.FullNetFx.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -67,18 +60,25 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BuildState.cs" />
     <Compile Include="DelegateCommand.cs" />
-    <Compile Include="Logging\LoggingConfig.cs" />
-    <Compile Include="Logging\LoggingModule.cs" />
+    <Compile Include="IBuildConfig.cs" />
+    <Compile Include="IBuildDisplay.cs" />
+    <Compile Include="IBuildItem.cs" />
+    <Compile Include="IBuildSourceItem.cs" />
+    <Compile Include="IMainViewModel.cs" />
+    <Compile Include="IMainWindow.cs" />
+    <Compile Include="Logging\SerilogConfig.cs" />
+    <Compile Include="Logging\SerilogLoggingModule.cs" />
     <Compile Include="ProgressPercentageChangedArgs.cs" />
     <Compile Include="PeriodicTask.cs" />
-    <Compile Include="RaiseEvent.cs" />
+    <Compile Include="EventHelper.cs" />
     <Compile Include="ViewModelBase.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="App.xaml.cs">
+    <Compile Include="App.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -86,7 +86,7 @@
     <Compile Include="BuildStateChangedArgs.cs" />
     <Compile Include="IBuildSource.cs" />
     <Compile Include="MainViewModel.cs" />
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="MainWindow.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>

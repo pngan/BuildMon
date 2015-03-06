@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace BuildMon
 {
     public class DelegateCommand : ICommand
     {
-        private Action _executeAction;
-        private Func<bool> _canExectute;
+        private readonly Func<bool> _canExectute;
+        private readonly Action _executeAction;
 
         public DelegateCommand(Action executeAction, Func<bool> canExecute)
         {

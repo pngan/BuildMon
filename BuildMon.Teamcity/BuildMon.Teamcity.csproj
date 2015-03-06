@@ -37,9 +37,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="RestSharp, Version=104.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\RestSharp.104.5.0\lib\net4\RestSharp.dll</HintPath>
@@ -53,22 +50,26 @@
     <Reference Include="Serilog">
       <HintPath>..\packages\Serilog.1.4.182\lib\net45\Serilog.dll</HintPath>
     </Reference>
-    <Reference Include="Serilog.FullNetFx">
-      <HintPath>..\packages\Serilog.1.4.182\lib\net45\Serilog.FullNetFx.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutofacConfiguration.cs" />
-    <Compile Include="BuildSource.cs" />
+    <Compile Include="TeamcityBuildSourceModule.cs" />
+    <Compile Include="TeamcityBuildItems.cs" />
+    <Compile Include="DllConfiguration.cs" />
+    <Compile Include="IDllConfiguration.cs" />
+    <Compile Include="ITCBuildConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TCBuildConfig.cs" />
+    <Compile Include="TCBuildItem.cs" />
+    <Compile Include="TCBuildSource.cs" />
+    <Compile Include="TeamcityBuild.cs" />
+    <Compile Include="TeamcityBuildItem.cs" />
+    <Compile Include="TeamcityBuilds.cs" />
+    <Compile Include="TeamcityBuildType.cs" />
+    <Compile Include="TeamcityBuildTypes.cs" />
+    <Compile Include="TeamcityDescriptor.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BuildMon\BuildMon.csproj">

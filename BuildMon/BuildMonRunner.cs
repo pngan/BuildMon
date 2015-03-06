@@ -1,20 +1,17 @@
-﻿using Autofac;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using log4net;
+using Autofac;
 
 namespace BuildMon
 {
     public class BuildMonRunner : IStartable
     {
-        private IEnumerable<IBuildSource> _buildSources;
-        private IEnumerable<IBuildDisplay> _buildDisplays;
-        private List<IBuildItem> _buildItems = new List<IBuildItem>();
-        private object _buildItemsLock = new object();
-        private Window _mainWindow;
-        public ILog Logger { get; set; }
+        private readonly IEnumerable<IBuildDisplay> _buildDisplays;
+        private readonly List<IBuildItem> _buildItems = new List<IBuildItem>();
+        private readonly object _buildItemsLock = new object();
+        private readonly IEnumerable<IBuildSource> _buildSources;
+        private readonly Window _mainWindow;
 
         public BuildMonRunner(
             IMainWindow mainWindow,
@@ -22,7 +19,7 @@ namespace BuildMon
             IBuildDisplay[] buildDisplays)
         {
             _mainWindow = mainWindow as Window;
-            if ( _mainWindow != null )
+            if (_mainWindow != null)
                 _mainWindow.Show();
 
             _buildSources = buildSources.ToArray();
@@ -73,7 +70,4 @@ namespace BuildMon
             }
         }
     }
-
-    public interface IBuildSourceItem : IBuildItem { }
-
 }
