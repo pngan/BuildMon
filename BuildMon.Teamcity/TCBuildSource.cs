@@ -59,27 +59,34 @@ namespace BuildMon.Teamcity
         //        <build id="48" number="9" running="true" percentageComplete="100" status="SUCCESS" buildTypeId="bt5" startDate="20141201T202134+1300" href="/httpAuth/app/rest/builds/id:48" webUrl="http://localhost:81/viewLog.html?buildId=48&buildTypeId=bt5"/>
         //    </builds>
         private async Task UpdateSingleTeamcityItem(TeamcityDescriptor teamcityItem)
-            //private async Task UpdateSingleTeamcityItem(TeamcityDescriptor teamcityItem, CancellationToken cancellationToken)
+        //private async Task UpdateSingleTeamcityItem(TeamcityDescriptor teamcityItem, CancellationToken cancellationToken)
         {
             // First check to see if the build item is a running configuration
             var requestTemplate = "buildTypes/id:{0}/builds?locator=count:1,running:{1}";
             var activeItemRequest = RequestGenerator(string.Format(requestTemplate, teamcityItem.id, "any"),
                 _buildConfig.TeamcityIsGuest);
-            var activeItemResponse = await _client.ExecuteTaskAsync<TeamcityBuilds>(activeItemRequest);
-            //var activeItemResponse = await _client.ExecuteTaskAsync<TeamcityBuilds>(activeItemRequest, cancellationToken);
-            if (activeItemResponse != null
-                && activeItemResponse.Data != null
-                && activeItemResponse.Data.build != null
-                && activeItemResponse.Data.build.Any())
+            try
             {
-                var item = activeItemResponse.Data.build.First();
+                var activeItemResponse = await _client.ExecuteTaskAsync<TeamcityBuilds>(activeItemRequest);
+                //var activeItemResponse = await _client.ExecuteTaskAsync<TeamcityBuilds>(activeItemRequest, cancellationToken);
+                if (activeItemResponse != null
+                    && activeItemResponse.Data != null
+                    && activeItemResponse.Data.build != null
+                    && activeItemResponse.Data.build.Any())
+                {
+                    var item = activeItemResponse.Data.build.First();
 
-                var buildItem = _items.FirstOrDefault(i => i.Id == item.buildTypeId);
-                if (buildItem == null)
-                    return;
-                buildItem.IsFailure = string.Equals(item.status, "FAILURE");
+                    var buildItem = _items.FirstOrDefault(i => i.Id == item.buildTypeId);
+                    if (buildItem == null)
+                        return;
+                    buildItem.IsFailure = string.Equals(item.status, "FAILURE");
 
-                buildItem.ProgressPercentage = item.running ? item.percentageComplete : (int?) null;
+                    buildItem.ProgressPercentage = item.running ? item.percentageComplete : (int?)null;
+                }
+            }
+            catch (Exception)
+            {
+                _logger.Error("An error occurred while requesting the url {Request}", _client.BaseUrl + "/" + activeItemRequest.Resource);
             }
         }
 
@@ -117,6 +124,7 @@ namespace BuildMon.Teamcity
             }
             catch (Exception ex)
             {
+                _logger.Error("An error occurred while requesting the url {Request}", _client.BaseUrl + "/" + buildTypesRequest.Resource);
                 return;
             }
 
