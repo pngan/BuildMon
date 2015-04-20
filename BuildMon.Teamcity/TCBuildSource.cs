@@ -101,7 +101,8 @@ namespace BuildMon.Teamcity
                 if (buildTypesResponse == null || buildTypesResponse.Data == null ||
                     buildTypesResponse.Data.buildType == null)
                     return;
-                _buildTypes = buildTypesResponse.Data.buildType;
+                var buildIds = _buildConfig.BuildIds().ToList();
+                _buildTypes = buildTypesResponse.Data.buildType.Where(bt => buildIds.Contains(bt.id)).ToList();                 
             }
             catch (Exception ex)
             {
