@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace BuildMon.Teamcity
 {
-    public interface ITCBuildConfig
+    public interface ITcBuildConfig
     {
         string TeamcityServer { get; }
         string TeamcityUser { get; }

@@ -15,8 +15,6 @@ namespace BuildMon
     /// </summary>
     public partial class App : Application
     {
-        private IContainer _container;
-
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             var teamcityAssembly = Assembly.LoadFile(Assembly.GetEntryAssembly().Location + @"\..\BuildMon.Teamcity.dll");
@@ -42,12 +40,15 @@ namespace BuildMon
             builder.RegisterType<MainWindow>();
             builder.RegisterType<MainViewModel>();
 
-            _container = builder.Build();
+            builder.Build();
         }
 
         private void ReadViewsFromPlugins(Assembly pluginAssembly)
         {
             var stream = pluginAssembly.GetManifestResourceStream(pluginAssembly.GetName().Name + ".g.resources");
+            if (stream == null)
+                return;
+
             var resourceReader = new ResourceReader(stream);
 
             foreach (DictionaryEntry resource in resourceReader)

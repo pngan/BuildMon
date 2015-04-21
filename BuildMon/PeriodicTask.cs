@@ -36,15 +36,17 @@ namespace BuildMon
                 await Task.Delay(period);
                 action();
             }
+            // ReSharper disable once FunctionNeverReturns
         }
 
-        public static async Task RunAsync(Func<Task> action, TimeSpan period)
+        public static async void RunAsync(Func<Task> action, TimeSpan period)
         {
             while (true)
             {
                 await Task.Delay(period);
                 await action();
             }
+            // ReSharper disable once FunctionNeverReturns
         }
 
         public static Task Run(Action action, TimeSpan period)

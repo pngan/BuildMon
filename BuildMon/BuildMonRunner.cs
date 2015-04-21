@@ -31,7 +31,7 @@ namespace BuildMon
             //Logger.Info("BuildMon starting");
             foreach (var source in _buildSources)
             {
-                var buildItems = await source.StartMonitoring(addedCallback, removedCallback);
+                var buildItems = await source.StartMonitoring(AddedCallback, RemovedCallback);
                 lock (_buildItemsLock)
                 {
                     _buildItems.AddRange(buildItems);
@@ -44,7 +44,7 @@ namespace BuildMon
             }
         }
 
-        private void removedCallback(IEnumerable<string> itemsToRemove)
+        private void RemovedCallback(IEnumerable<string> itemsToRemove)
         {
             lock (_buildItemsLock)
             {
@@ -57,7 +57,7 @@ namespace BuildMon
             }
         }
 
-        private void addedCallback(IEnumerable<IBuildItem> buildItemsToAdd)
+        private void AddedCallback(IEnumerable<IBuildItem> buildItemsToAdd)
         {
             lock (_buildItemsLock)
             {
