@@ -6,9 +6,9 @@ namespace BuildMon.Teamcity
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<TCBuildSource>().As<IBuildSource>().SingleInstance();
-            builder.RegisterType<TCBuildConfig>().As<ITCBuildConfig, IBuildConfig>().SingleInstance();
-            builder.RegisterType<TCBuildItem>().As<IBuildSourceItem>();
+            builder.RegisterType<TcBuildSource>().As<IBuildSource>().SingleInstance();
+            builder.RegisterType<TcBuildConfig>().As<ITcBuildConfig, IBuildConfig>().SingleInstance();
+            builder.RegisterType<TcBuildItem>().As<IBuildSourceItem>();
             builder.RegisterType<DllConfiguration>().As<IDllConfiguration>().SingleInstance();
         }
     }

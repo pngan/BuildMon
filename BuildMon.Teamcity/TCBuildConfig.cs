@@ -2,11 +2,11 @@ using System.Collections.Generic;
 
 namespace BuildMon.Teamcity
 {
-    public class TCBuildConfig : ITCBuildConfig, IBuildConfig
+    public class TcBuildConfig : ITcBuildConfig, IBuildConfig
     {
         private readonly List<string> _buildIds;
 
-        public TCBuildConfig(IDllConfiguration config)
+        public TcBuildConfig(IDllConfiguration config)
         {
             _buildIds = new List<string>(config.GetSetting("BuildIds").Split(';'));
             TeamcityServer = config.GetSetting("TeamcityServer");

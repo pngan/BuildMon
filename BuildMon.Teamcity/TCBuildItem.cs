@@ -2,15 +2,14 @@ using System;
 
 namespace BuildMon.Teamcity
 {
-    public class TCBuildItem : IBuildSourceItem
+    public class TcBuildItem : IBuildSourceItem
     {
         public delegate IBuildSourceItem Factory(string id, string projectName, string itemName);
 
         private bool _isFailure;
-        private int? _percentageProgress;
         private int? _progressPercentage;
 
-        public TCBuildItem(string id, string projectName, string itemName)
+        public TcBuildItem(string id, string projectName, string itemName)
         {
             Id = id;
             ProjectName = projectName;

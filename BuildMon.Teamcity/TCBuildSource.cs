@@ -7,17 +7,17 @@ using Serilog;
 
 namespace BuildMon.Teamcity
 {
-    public class TCBuildSource : IBuildSource
+    public class TcBuildSource : IBuildSource
     {
-        private readonly ITCBuildConfig _buildConfig;
-        private readonly TCBuildItem.Factory _buildItemFactory;
+        private readonly ITcBuildConfig _buildConfig;
+        private readonly TcBuildItem.Factory _buildItemFactory;
         private readonly List<IBuildSourceItem> _items = new List<IBuildSourceItem>();
         private readonly ILogger _logger;
 
         private List<TeamcityBuildType> _buildTypes;
         private RestClient _client;
 
-        public TCBuildSource(ITCBuildConfig buildConfig, TCBuildItem.Factory buildItemFactory, ILogger logger)
+        public TcBuildSource(ITcBuildConfig buildConfig, TcBuildItem.Factory buildItemFactory, ILogger logger)
         {
             _buildConfig = buildConfig;
             _buildItemFactory = buildItemFactory;
@@ -29,16 +29,60 @@ namespace BuildMon.Teamcity
         {
             try
             {
-                await Start();
+                await InitializeTeamcityBuildSource();
                 PeriodicTask.RunAsync(MonitorBuildItems, TimeSpan.FromSeconds(10));
 
                 return _items;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Enumerable.Empty<IBuildItem>();
             }
-            return Enumerable.Empty<IBuildItem>();
+        }
+
+
+        private async Task InitializeTeamcityBuildSource()
+        {
+            _client = new RestClient {BaseUrl = _buildConfig.TeamcityServer};
+            if (!_buildConfig.TeamcityIsGuest)
+            {
+                _client.Authenticator = new HttpBasicAuthenticator(_buildConfig.TeamcityUser,
+                    _buildConfig.TeamcityPassword);
+            }
+
+            var buildTypesRequest = RequestGenerator("buildTypes", _buildConfig.TeamcityIsGuest);
+            try
+            {
+                var buildTypesResponse = await _client.ExecuteTaskAsync<TeamcityBuildTypes>(buildTypesRequest);
+                if (buildTypesResponse == null || buildTypesResponse.Data == null ||
+                    buildTypesResponse.Data.buildType == null)
+                    return;
+                var buildIds = _buildConfig.BuildIds().ToList();
+                _buildTypes = buildTypesResponse.Data.buildType.Where(bt => buildIds.Contains(bt.id)).ToList();
+            }
+            catch (Exception)
+            {
+                _logger.Error("An error occurred while requesting the url {Request}", _client.BaseUrl + "/" + buildTypesRequest.Resource);
+                return;
+            }
+
+            // Create list of BuildItems from Configuration file
+            foreach (var buildId in _buildConfig.BuildIds())
+            {
+                var buildType = _buildTypes.FirstOrDefault(bt => bt.id == buildId);
+                if (buildType == null)
+                    continue;
+                _items.Add(_buildItemFactory(buildType.id, buildType.projectName, buildType.name));
+            }
+        }
+
+        private async Task MonitorBuildItems()
+        {
+            _logger.Information("Monitoring Teamcity Build Item at {Time}", DateTime.Now);
+            foreach (var buildType in _buildTypes)
+            {
+                await UpdateSingleTeamcityItem(buildType);
+            }
         }
 
         // http://localhost:81/httpAuth/app/rest/buildTypes/id:bt5/builds?locator=count:1,running:true
@@ -75,50 +119,6 @@ namespace BuildMon.Teamcity
             }
         }
 
-        private async Task MonitorBuildItems()
-        {
-            _logger.Information("Monitoring Teamcity Build Item at {Time}", DateTime.Now);
-            foreach (var buildType in _buildTypes)
-            {
-                await UpdateSingleTeamcityItem(buildType);
-            }
-        }
-
-        public async Task Start()
-        {
-            _client = new RestClient();
-            _client.BaseUrl = _buildConfig.TeamcityServer;
-            if (!_buildConfig.TeamcityIsGuest)
-            {
-                _client.Authenticator = new HttpBasicAuthenticator(_buildConfig.TeamcityUser,
-                    _buildConfig.TeamcityPassword);
-            }
-
-            var buildTypesRequest = RequestGenerator("buildTypes", _buildConfig.TeamcityIsGuest);
-            try
-            {
-                var buildTypesResponse = await _client.ExecuteTaskAsync<TeamcityBuildTypes>(buildTypesRequest);
-                if (buildTypesResponse == null || buildTypesResponse.Data == null ||
-                    buildTypesResponse.Data.buildType == null)
-                    return;
-                var buildIds = _buildConfig.BuildIds().ToList();
-                _buildTypes = buildTypesResponse.Data.buildType.Where(bt => buildIds.Contains(bt.id)).ToList();                 
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("An error occurred while requesting the url {Request}", _client.BaseUrl + "/" + buildTypesRequest.Resource);
-                return;
-            }
-
-            // Create list of BuildItems from Configuration file
-            foreach (var buildId in _buildConfig.BuildIds())
-            {
-                var buildType = _buildTypes.FirstOrDefault(bt => bt.id == buildId);
-                if (buildType == null)
-                    continue;
-                _items.Add(_buildItemFactory(buildType.id, buildType.projectName, buildType.name));
-            }
-        }
 
         private IRestRequest RequestGenerator(string query, bool isGuestAuth)
         {

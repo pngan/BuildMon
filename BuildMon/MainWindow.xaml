@@ -1,9 +1,8 @@
 ﻿<Window x:Class="BuildMon.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:BuildMon="clr-namespace:BuildMon"
-        Loaded="Window_Loaded"
-        Title="BuildMon">
+        Title="BuildMon"
+        Loaded="Window_Loaded">
     <Window.Style>
         <Style TargetType="{x:Type Window}">
             <Setter Property="Height" Value="350" />

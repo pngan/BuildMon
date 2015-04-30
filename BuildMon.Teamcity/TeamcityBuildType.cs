@@ -1,3 +1,4 @@
+// ReSharper disable InconsistentNaming
 namespace BuildMon.Teamcity
 {
     public class TeamcityBuildType : TeamcityDescriptor

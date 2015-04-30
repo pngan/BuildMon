@@ -2,7 +2,7 @@
 
 namespace BuildMon.Display.WPF
 {
-    public class WPFBuildDisplayModule : Module
+    public class WpfBuildDisplayModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {
